@@ -1,0 +1,21 @@
+# ZEPSUTY #4 — ten kończy się na ZIELONO. Na tym polega problem.
+- name: Wdrożenie serwera WWW
+  hosts: all
+  gather_facts: false
+
+  tasks:
+    - name: Zainstaluj serwer WWW
+      ansible.builtin.dnf:
+        name: httpdd
+        state: present
+      ignore_errors: true
+
+    - name: Sprawdź, czy serwer odpowiada
+      ansible.builtin.command: httpd -v
+      register: wersja
+      failed_when: false
+      changed_when: false
+
+    - name: Wdrożenie zakończone
+      ansible.builtin.debug:
+        msg: "Serwer WWW gotowy na {{ inventory_hostname }}"

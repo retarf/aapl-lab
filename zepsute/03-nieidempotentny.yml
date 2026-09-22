@@ -1,0 +1,19 @@
+# ZEPSUTY #3 — uruchom DWA razy i porównaj
+- name: Dopisz wpis do listy serwerów
+  hosts: all
+  gather_facts: true
+
+  tasks:
+    - name: Utwórz katalog
+      ansible.builtin.shell: mkdir -p /opt/lab
+
+    - name: Dopisz wpis
+      ansible.builtin.shell: echo "{{ inventory_hostname }} zarejestrowany" >> /opt/lab/serwery.txt
+
+    - name: Pokaż zawartość
+      ansible.builtin.shell: cat /opt/lab/serwery.txt
+      register: lista
+
+    - name: Lista
+      ansible.builtin.debug:
+        var: lista.stdout_lines

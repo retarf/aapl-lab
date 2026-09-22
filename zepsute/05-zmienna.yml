@@ -1,0 +1,15 @@
+# ZEPSUTY #5
+- name: Konfiguracja aplikacji
+  hosts: all
+  gather_facts: false
+
+  vars:
+    app_name: sklep
+    app_port: 8080
+
+  tasks:
+    - name: Wygeneruj /etc/app.conf
+      ansible.builtin.template:
+        src: zepsute/templates/app.conf.j2
+        dest: /etc/app.conf
+        mode: "0644"

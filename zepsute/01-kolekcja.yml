@@ -1,0 +1,9 @@
+# ZEPSUTY #1
+- name: Ustaw strefę czasową
+  hosts: all
+  gather_facts: false
+
+  tasks:
+    - name: Strefa czasowa na Europe/Warsaw
+      community.general.timezone:
+        name: Europe/Warsaw
