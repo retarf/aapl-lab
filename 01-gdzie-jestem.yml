@@ -1,0 +1,24 @@
+- name: Gdzie i jako kto wykonuje się task
+  hosts: all
+  gather_facts: true
+
+  tasks:
+    - name: Zapytaj system o tożsamość
+      ansible.builtin.command: hostname
+      register: h
+      changed_when: false
+
+    - name: Kim jestem
+      ansible.builtin.command: id -un
+      register: kto
+      changed_when: false
+
+    - name: Podsumowanie
+      ansible.builtin.debug:
+        msg:
+          - "inventory_hostname: {{ inventory_hostname }}"
+          - "połączenie:         {{ ansible_connection | default('ssh') }}"
+          - "hostname systemu:   {{ h.stdout }}"
+          - "użytkownik:         {{ kto.stdout }}"
+          - "system:             {{ ansible_facts.distribution }} {{ ansible_facts.distribution_version }}"
+          - "python:             {{ ansible_facts.python_version }}"

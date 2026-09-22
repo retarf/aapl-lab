@@ -1,0 +1,34 @@
+- name: Instalacja pakietu i warunki
+  hosts: all
+  gather_facts: true
+
+  vars:
+    pakiety:
+      - tree
+      - which
+
+  tasks:
+    - name: Ten host nie jest z rodziny RedHat — pomiń
+      ansible.builtin.debug:
+        msg: "Rodzina: {{ ansible_facts.os_family }} — playbook zakłada RedHat, kończę."
+      when: ansible_facts.os_family != "RedHat"
+
+    - name: Zainstaluj pakiety
+      ansible.builtin.dnf:
+        name: "{{ pakiety }}"
+        state: present
+      when: ansible_facts.os_family == "RedHat"
+
+    - name: Sprawdź, czy są
+      ansible.builtin.command: "which {{ item }}"
+      loop: "{{ pakiety }}"
+      register: sprawdzenie
+      changed_when: false
+      failed_when: false
+
+    - name: Wynik
+      ansible.builtin.debug:
+        msg: "{{ item.item }} → {{ 'jest' if item.rc == 0 else 'BRAK' }}"
+      loop: "{{ sprawdzenie.results }}"
+      loop_control:
+        label: "{{ item.item }}"

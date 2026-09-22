@@ -1,0 +1,32 @@
+- name: Plik konfiguracyjny z szablonu
+  hosts: all
+  gather_facts: true
+
+  vars:
+    lab_port: 8080
+    lab_max_clients: 200
+    lab_owner: zespol-automatyzacji
+
+  tasks:
+    - name: Wygeneruj /etc/lab.conf z szablonu
+      ansible.builtin.template:
+        src: templates/lab.conf.j2
+        dest: /etc/lab.conf
+        owner: root
+        group: root
+        mode: "0644"
+      notify: Pokaż, że coś się zmieniło
+
+    - name: Odczytaj plik z powrotem
+      ansible.builtin.slurp:
+        src: /etc/lab.conf
+      register: odczyt
+
+    - name: Zawartość
+      ansible.builtin.debug:
+        msg: "{{ (odczyt.content | b64decode).split('\n') }}"
+
+  handlers:
+    - name: Pokaż, że coś się zmieniło
+      ansible.builtin.debug:
+        msg: "Handler odpalił — plik się zmienił. Przy drugim uruchomieniu już nie odpali."
